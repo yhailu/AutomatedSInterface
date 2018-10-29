@@ -1,0 +1,48 @@
+######################################################################
+Implementation Guide
+- the purpose of this file is to keep track of what needs to be done to improve the autosettle tool
+- it's available in the git repository and will be removed after completion
+######################################################################
+
+Credentials.java
+-remove credentials.java - by running locally on smbsettle node all credentials will be obsoleted
+
+Progress.java
+- no changes necessary at this time
+
+RestAPI.py
+- add method for (in order) - Full refund from original txn/cap/closebatch, new auth/cap/closebatch, partial refund/cap/closebatch, auth/partial void/cap/closebatch
+- add payload for L2 data for auth txns
+- add payload for L3 data for auth txns
+- refactor basic payload to L1 payload
+- if cardproc != PMT, do voids. otherwise, move on to next txn
+
+
+Solution.java
+- refactor out jsch bash commands to be replaced by Runtime.getRuntime().exec(BASH COMMAND)
+- output batchids to a file that includes merchid - at end of thread completion
+        - MERCHID, batchid, batchid, batchid, .., batchid, batchid;\n
+- add merchid or cardproc to printout to support multi-thread log watching
+
+AutomatedSettle.java
+- add logic to monitor for cardproc and batchid
+- remove moving file to tmp, just run a mv command or store file name in a list or something in python - output to preFILENAME with list of filenames
+- add file output for merchid and batchid - may work better here instead of solution
+
+New Features
+- add AutomatedResettle.java
+    - store file name after resettle is complete as postFILENAME with list of settle files generated, should be same format as AutomatedSettle file output
+
+- add prompt for pre-release testing or post release testing
+    - pre-release will run AutomatedSettle to create batches
+        - add request for output file name
+    - post-release will run AutomatedResettle to resettle batches
+        - add request for input file name (should be what was generated in AutomatedSettle)
+- have .dat file with merchids to read in to Solution.java to create a new thread for each merchid listed in file
+
+- add AutomatedCompare.java
+    -compare filename output from preFILENAME and postFILENAME
+
+
+
+
